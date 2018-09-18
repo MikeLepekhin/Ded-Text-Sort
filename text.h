@@ -1,22 +1,58 @@
-//
-// Created by mike on 17.09.18.
-//
-
 #ifndef TEXT_SORT_TEXT_H
 #define TEXT_SORT_TEXT_H
 
-#include <unistd.h>
 #include <cstdio>
-#include <sys/stat.h>
 #include <cassert>
+#include <algorithm>
 #include <cwchar>
 
 #include "stdlib_utf16.h"
+#include "string_utf16.h"
+
+struct DefaultComp {
+  bool operator()(const StringUtf16& str1, const StringUtf16& str2) {
+    return str1 < str2;
+  }
+};
+
+struct ReverseComp {
+  bool operator()(const StringUtf16& str1, const StringUtf16& str2) {
+    return str1.compReverse(str2);
+  }
+};
+
+struct InvComp {
+  bool operator()(const StringUtf16& str1, const StringUtf16& str2) {
+    return str2 < str1;
+  }
+};
+
+struct InvReverseComp {
+  bool operator()(const StringUtf16& str1, const StringUtf16& str2) {
+    return str2.compReverse(str1);
+  }
+};
 
 class Text {
  private:
   char16_t* bytes_{nullptr};
   size_t size_{0};
+  StringUtf16* lines_{nullptr};
+  size_t line_cnt_{0};
+
+  void setLinePointers() {
+    if (line_cnt_ == 0) {
+      return;
+    }
+
+    lines_[0].setPtr(bytes_);
+    size_t cur_line = 0;
+    for (size_t ch_id = 0; ch_id < size_ && bytes_[ch_id] != L'\0'; ++ch_id) {
+      if (bytes_[ch_id] == L'\n') {
+        lines_[++cur_line].setPtr(&bytes_[ch_id + 1]);
+      }
+    }
+  }
 
  public:
   Text() {}
@@ -25,49 +61,29 @@ class Text {
     printFileInfo(file_location);
     size_ = byte_count(file_location);
     read_file(&bytes_, file_location, size_);
-
-    //std::wcout << bytes_ << '\n';
-    //std::cout << strlen_utf16(bytes_) << '\n';
+    line_cnt_ = strcnt_in_text(bytes_, size_);
+    printf("# Count of lines in the file: \t%ld\n", line_cnt_);
+    lines_ = new StringUtf16[line_cnt_ + 1];
+    setLinePointers();
   }
 
   void printFileInfo(const char* file_location) {
-    struct stat fileStat;
-    assert(stat(file_location, &fileStat) == 0);
-
-    printf("# information for file: %s\n",file_location);
-    printf("# ---------------------------\n");
-    printf("# File Size: %ld bytes\n",fileStat.st_size);
-
-    printf("# File Permissions: ");
-    printf( (S_ISDIR(fileStat.st_mode)) ? "d" : "-");
-    printf( (fileStat.st_mode & S_IRUSR) ? "r" : "-");
-    printf( (fileStat.st_mode & S_IWUSR) ? "w" : "-");
-    printf( (fileStat.st_mode & S_IXUSR) ? "x" : "-");
-    printf( (fileStat.st_mode & S_IRGRP) ? "r" : "-");
-    printf( (fileStat.st_mode & S_IWGRP) ? "w" : "-");
-    printf( (fileStat.st_mode & S_IXGRP) ? "x" : "-");
-    printf( (fileStat.st_mode & S_IROTH) ? "r" : "-");
-    printf( (fileStat.st_mode & S_IWOTH) ? "w" : "-");
-    printf( (fileStat.st_mode & S_IXOTH) ? "x" : "-");
-    printf("\n\n");
+    print_file_info(file_location);
   }
 
-  void printFile(const char* file_location) {
-    printf("# printing file: \t%s\n", file_location);
-
-    FILE* text_file = fopen(file_location, "r");
-
-    char cur_ch = fgetc(text_file);
-    while (cur_ch != EOF) {
-      printf("%c", cur_ch);
-      cur_ch = fgetc(text_file);
-    }
-    fclose(text_file);
+  template<class Comp = DefaultComp>
+  void sort() {
+    std::cout << "# i'm sorting your file\n";
+    std::sort(&lines_[0], &lines_[line_cnt_], Comp());
+    std::cout << "# it's ok\n";
   }
 
   void writeToFile(const char* output_location) {
     printf("# writing file to: \t%s\n", output_location);
-    write_to_file(bytes_, output_location);
+    create_empty_file(output_location);
+    for (size_t line_id = 0; line_id < line_cnt_; ++line_id) {
+      add_line_to_file(lines_[line_id].getPtr(), output_location, lines_[line_id].size());
+    }
   }
 
   ~Text() {
