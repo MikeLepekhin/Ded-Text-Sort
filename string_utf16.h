@@ -49,21 +49,22 @@ class StringUtf16 {
   }
 
   bool operator<(const StringUtf16& another) const {
+    //std::cout << "kek\n";
     size_t char_id1 = 0;
     size_t char_id2 = 0;
 
     char_id1 = nextNotSepar(*this, char_id1);
     char_id2 = nextNotSepar(another, char_id2);
     for ( ; char_id1 < size_ && char_id2 < another.size_; ++char_id1, ++char_id2) {
-      if (htobe16(begin_[char_id1]) < htobe16(another.begin_[char_id2])) {
+      if (htobe16(begin_[char_id1]) < htobe16(another[char_id2])) {
         return true;
-      } else if (htobe16(begin_[char_id1]) > htobe16(another.begin_[char_id2])) {
+      } else if (htobe16(begin_[char_id1]) > htobe16(another[char_id2])) {
         return false;
       }
       char_id1 = nextNotSepar(*this, char_id1);
       char_id2 = nextNotSepar(another, char_id2);
     }
-    return char_id1 == size_;
+    return char_id1 == size_ && char_id2 != another.size_;
   }
 
   bool compReverse(const StringUtf16& another) const {
@@ -81,7 +82,7 @@ class StringUtf16 {
       char_id1 = prevNotSepar(*this, char_id1);
       char_id2 = prevNotSepar(another, char_id2);
     }
-    return char_id1 == size_;
+    return char_id1 == size_ && char_id2 != another.size_;
   }
 };
 

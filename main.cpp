@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
 
   Text text(argv[1]);
 
-  text.sort();
+  text.sort<InvReverseComp>();
   if (argc == 3) {
     text.writeToFile(argv[2]);
   } else {

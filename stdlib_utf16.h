@@ -69,7 +69,7 @@ bool is_separator(char16_t ch) {
   return ch == L'.' || ch == L'!' || ch == L':' || ch == L'"'
       || ch == L',' || ch == L'-' || ch == L';' || ch == L'?'
       || ch == L'(' || ch == L')' || ch == L'[' || ch == L']'
-      || ch == L'{' || ch == L'}';
+      || ch == L'{' || ch == L'}' || ch == L'«' || ch == L'»';
 }
 
 void print_without_separators(char16_t* str, const char* filename) {
