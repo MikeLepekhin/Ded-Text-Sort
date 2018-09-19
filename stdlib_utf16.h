@@ -110,10 +110,11 @@ void add_line_to_file(char16_t* str, const char* output_location, size_t len = 0
 }
 
 bool is_separator(char16_t ch) {
-  return ch == L'.' || ch == L'!' || ch == L':' || ch == L'"'
-      || ch == L',' || ch == L'-' || ch == L';' || ch == L'?'
-      || ch == L'(' || ch == L')' || ch == L'[' || ch == L']'
-      || ch == L'{' || ch == L'}' || ch == L'«' || ch == L'»';
+  return ch == u'.' || ch == u'!' || ch == u':' || ch == u'"'
+      || ch == u',' || ch == u'-' || ch == u';' || ch == u'?'
+      || ch == u'(' || ch == u')' || ch == u'[' || ch == u']'
+      || ch == u'{' || ch == u'}' || ch == u'«' || ch == u'»'
+      || ch == u'`';
 }
 
 void print_without_separators(char16_t* str, const char* filename) {
@@ -201,7 +202,14 @@ size_t prev_not_separ(const char16_t* str, size_t pos, size_t len) {
   return pos;
 }
 
-bool strcmp_utf16(const char16_t* str1, const char16_t* str2, size_t len1, size_t len2) {
+bool strcmp_utf16(const char16_t* str1, const char16_t* str2, size_t len1 = 0, size_t len2 = 0) {
+  if (len1 == 0) {
+    len1 = strlen_utf16(str1);
+  }
+  if (len2 == 0) {
+    len2 = strlen_utf16(str2);
+  }
+
   size_t char_id1 = 0;
   size_t char_id2 = 0;
 
@@ -219,7 +227,14 @@ bool strcmp_utf16(const char16_t* str1, const char16_t* str2, size_t len1, size_
   return char_id1 == len1 && char_id2 != len2;
 }
 
-bool strcmp_rev(const char16_t* str1, const char16_t* str2, size_t len1, size_t len2) {
+bool strcmp_rev(const char16_t* str1, const char16_t* str2, size_t len1 = 0, size_t len2 = 0) {
+  if (len1 == 0) {
+    len1 = strlen_utf16(str1);
+  }
+  if (len2 == 0) {
+    len2 = strlen_utf16(str2);
+  }
+
   size_t char_id1 = 0;
   size_t char_id2 = 0;
 
