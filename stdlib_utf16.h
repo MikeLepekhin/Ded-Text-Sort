@@ -186,4 +186,55 @@ void print_file_info(const char* file_location) {
   printf( (fileStat.st_mode & S_IXOTH) ? "x" : "-");
   printf("\n\n");
 }
+
+size_t next_not_separ(const char16_t* str, size_t pos, size_t len) {
+  while (pos < len && is_separator(str[pos])) {
+    ++pos;
+  }
+  return pos;
+}
+
+size_t prev_not_separ(const char16_t* str, size_t pos, size_t len) {
+  while (pos < len && is_separator(str[len - pos - 1])) {
+    ++pos;
+  }
+  return pos;
+}
+
+bool strcmp_utf16(const char16_t* str1, const char16_t* str2, size_t len1, size_t len2) {
+  size_t char_id1 = 0;
+  size_t char_id2 = 0;
+
+  char_id1 = next_not_separ(str1, char_id1, len1);
+  char_id2 = next_not_separ(str2, char_id2, len2);
+  for ( ; char_id1 < len1 && char_id2 < len2; ++char_id1, ++char_id2) {
+    if (htobe16(str1[char_id1]) < htobe16(str2[char_id2])) {
+      return true;
+    } else if (htobe16(str1[char_id1]) > htobe16(str2[char_id2])) {
+      return false;
+    }
+    char_id1 = next_not_separ(str1, char_id1, len1);
+    char_id2 = next_not_separ(str2, char_id2, len2);
+  }
+  return char_id1 == len1 && char_id2 != len2;
+}
+
+bool strcmp_rev(const char16_t* str1, const char16_t* str2, size_t len1, size_t len2) {
+  size_t char_id1 = 0;
+  size_t char_id2 = 0;
+
+  char_id1 = prev_not_separ(str1, char_id1, len1);
+  char_id2 = prev_not_separ(str2, char_id2, len2);
+  for ( ; char_id1 < len1 && char_id2 < len2; ++char_id1, ++char_id2) {
+    if (htobe16(str1[len1 - char_id1 - 1]) < htobe16(str2[len2 - char_id2 - 1])) {
+      return true;
+    } else if (htobe16(str1[len1 - char_id1 - 1]) > htobe16(str2[len2 - char_id2 - 1])) {
+      return false;
+    }
+    char_id1 = prev_not_separ(str1, char_id1, len1);
+    char_id2 = prev_not_separ(str2, char_id2, len2);
+  }
+  return char_id1 == len1 && char_id2 != len2;
+}
+
 #endif //TEXT_SORT_STDLIB_UTF16_H
