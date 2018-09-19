@@ -4,6 +4,17 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <assert.h>
+#include "exceptions.h"
+
+bool file_exists(const char* filename) {
+  FILE* file = fopen(filename, "r");
+
+  if (file) {
+    fclose(file);
+    return true;
+  }
+  return false;
+}
 
 size_t byte_count(const char* file_location) {
   struct stat fileStat = {};
@@ -119,6 +130,7 @@ void create_empty_file(const char* file_location) {
 
 void print_file_info(const char* file_location) {
   struct stat fileStat;
+  assert(stat(file_location, &fileStat) == 0);
   assert(stat(file_location, &fileStat) == 0);
 
   printf("# information for file: %s\n",file_location);

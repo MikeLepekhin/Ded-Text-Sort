@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "stdlib_utf16.h"
+#include "exceptions.h"
 
 class StringUtf16;
 
@@ -41,10 +42,16 @@ class StringUtf16 {
   }
 
   char16_t& operator[](size_t pos)  {
+    if (pos >= size_) {
+      throw OutOfRangeException("", __PRETTY_FUNCTION__);
+    }
     return begin_[pos];
   }
 
   const char16_t& operator[](size_t pos) const {
+    if (pos >= size_) {
+      throw OutOfRangeException("", __PRETTY_FUNCTION__);
+    }
     return begin_[pos];
   }
 

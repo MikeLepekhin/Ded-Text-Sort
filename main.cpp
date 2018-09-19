@@ -1,7 +1,9 @@
 #include <iostream>
 #include <cstdio>
-#include "text.h"
 #include <getopt.h>
+
+#include "exceptions.h"
+#include "text.h"
 
 #define MY_CHAR char
 
@@ -63,19 +65,34 @@ int main(int argc, char** argv) {
     help();
     return 1;
   }
-  if (!isFileExist(argv[1])) {
-    std::cerr << "!!! Input file " << argv[1] << " doesn't exist\n";
+
+  try {
+    Text text(argv[1]);
+    text.sort<DefaultComp>();
+
+    if (argc == 3) {
+      text.writeToFile(argv[2]);
+    } else {
+      text.writeToFile(argv[1]);
+    }
+    text.sort<ReverseComp>();
+
+    if (argc == 3) {
+      text.addToFile(argv[2]);
+    } else {
+      text.addToFile(argv[1]);
+    }
+    text.sort<OriginalComp>();
+
+    if (argc == 3) {
+      text.addToFile(argv[2]);
+    } else {
+      text.addToFile(argv[1]);
+    }
+
+  } catch (const TextSortException& tsexception) {
+    std::cerr << tsexception;
     return 1;
   }
-
-  Text text(argv[1]);
-
-  text.sort<InvReverseComp>();
-  if (argc == 3) {
-    text.writeToFile(argv[2]);
-  } else {
-    text.writeToFile(argv[1]);
-  }
-
   return 0;
 }

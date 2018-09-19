@@ -8,6 +8,7 @@
 
 #include "stdlib_utf16.h"
 #include "string_utf16.h"
+#include "exceptions.h"
 
 struct DefaultComp {
   bool operator()(const StringUtf16& str1, const StringUtf16& str2) {
@@ -30,6 +31,12 @@ struct InvComp {
 struct InvReverseComp {
   bool operator()(const StringUtf16& str1, const StringUtf16& str2) {
     return str2.compReverse(str1);
+  }
+};
+
+struct OriginalComp {
+  bool operator()(const StringUtf16& str1, const StringUtf16& str2) {
+    return str1.getPtr() < str2.getPtr();
   }
 };
 
@@ -58,6 +65,9 @@ class Text {
   Text() {}
 
   Text(const char* file_location) {
+    if (!file_exists(file_location)) {
+      throw NonexistentFileException(file_location, __PRETTY_FUNCTION__);
+    }
     printFileInfo(file_location);
     size_ = byte_count(file_location);
     read_file(&bytes_, file_location, size_);
@@ -79,8 +89,14 @@ class Text {
   }
 
   void writeToFile(const char* output_location) {
-    printf("# writing file to: \t%s\n", output_location);
+    printf("# writing text to: \t%s\n", output_location);
     create_empty_file(output_location);
+    for (size_t line_id = 0; line_id < line_cnt_; ++line_id) {
+      add_line_to_file(lines_[line_id].getPtr(), output_location, lines_[line_id].size());
+    }
+  }
+
+  void addToFile(const char* output_location) {
     for (size_t line_id = 0; line_id < line_cnt_; ++line_id) {
       add_line_to_file(lines_[line_id].getPtr(), output_location, lines_[line_id].size());
     }
