@@ -1,3 +1,12 @@
+/*!
+ * \file
+ * \brief This file contains the class StringUtf16 used to keep lines of text in UTF-16.
+ *
+ * \author Mikhail Lepekhin
+ * \copyright All rights belong to the author
+ * \version 1.0
+ */
+
 #ifndef TEXT_SORT_STRING_UTF16_H
 #define TEXT_SORT_STRING_UTF16_H
 
@@ -11,6 +20,10 @@ class StringUtf16;
 size_t nextNotSepar(const StringUtf16& str, size_t pos);
 size_t prevNotSepar(const StringUtf16& str, size_t pos);
 
+/*!
+ * \class
+ * \briefly This is the class for working with strings in UTF-16
+ */
 class StringUtf16 {
  private:
   char16_t* begin_{nullptr};
@@ -55,6 +68,10 @@ class StringUtf16 {
     return begin_[pos];
   }
 
+  /*!
+* \function
+* \briefly This operator is used to sort strings in usual lexicographical order ignoring separation characters
+*/
   bool operator<(const StringUtf16& another) const {
     //std::cout << "kek\n";
     size_t char_id1 = 0;
@@ -74,6 +91,10 @@ class StringUtf16 {
     return char_id1 == size_ && char_id2 != another.size_;
   }
 
+  /*!
+* \function
+* \briefly This operator is used to sort strings in lexicographical order of reserve strings ignoring separation characters
+*/
   bool compReverse(const StringUtf16& another) const {
     size_t char_id1 = 0;
     size_t char_id2 = 0;

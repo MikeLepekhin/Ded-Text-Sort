@@ -1,3 +1,16 @@
+/*!
+ * \file
+ * \brief This program get a text from <input_file> in UTF-16 encoding and writes to <output_file> these 3 version of it:
+ *        1) The text sorting in lexicographical order (ignoring separation symbols)
+ *        2) The text sorting in lexicographical order of reversed strings (ignoring separation symbols)
+ *        3) The text in original order of strings
+ * \details The program has options --help and --verbose.
+ *
+ * \author Mikhail Lepekhin
+ * \copyright All rights belong to the author
+ * \version 1.0
+ */
+
 #include <iostream>
 #include <cstdio>
 #include <getopt.h>
@@ -42,15 +55,6 @@ void parseOptions(int argc, char** argv) {
         return;
     }
   }
-}
-
-bool isFileExist(const char* filename){
-  FILE *file = fopen(filename, "r");
-  if (file) {
-    fclose(file);
-    return true;
-  }
-  return false;
 }
 
 int main(int argc, char** argv) {

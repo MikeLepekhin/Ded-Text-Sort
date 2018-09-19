@@ -1,3 +1,12 @@
+/*!
+ * \file
+ * \brief This file contains the class Text used to keep and sort texts in UTF-16.
+ *
+ * \author Mikhail Lepekhin
+ * \copyright All rights belong to the author
+ * \version 1.0
+ */
+
 #ifndef TEXT_SORT_TEXT_H
 #define TEXT_SORT_TEXT_H
 
@@ -10,36 +19,61 @@
 #include "string_utf16.h"
 #include "exceptions.h"
 
+/*!
+ * \briefly This comparator is used to sort strings in the
+ * file in usual lexicographical order (ignoring separation symbols)
+ */
 struct DefaultComp {
   bool operator()(const StringUtf16& str1, const StringUtf16& str2) {
     return str1 < str2;
   }
 };
 
+/*!
+ * \briefly This comparator is used to sort strings in the
+ * file in lexicographical order of reverse strings (ignoring separation symbols)
+ */
 struct ReverseComp {
   bool operator()(const StringUtf16& str1, const StringUtf16& str2) {
     return str1.compReverse(str2);
   }
 };
 
+
+/*!
+ * \briefly This comparator is used to sort strings in the
+ * file in inverted usual lexicographical order (ignoring separation symbols)
+ */
 struct InvComp {
   bool operator()(const StringUtf16& str1, const StringUtf16& str2) {
     return str2 < str1;
   }
 };
 
+
+/*!
+ * \briefly This comparator is used to sort strings in the
+ * file in inverted lexicographical order of reverse strings (ignoring separation symbols)
+ */
 struct InvReverseComp {
   bool operator()(const StringUtf16& str1, const StringUtf16& str2) {
     return str2.compReverse(str1);
   }
 };
 
+/*!
+ * \briefly This comparator returns the primordial order of strings
+ */
 struct OriginalComp {
   bool operator()(const StringUtf16& str1, const StringUtf16& str2) {
     return str1.getPtr() < str2.getPtr();
   }
 };
 
+/*!
+ * \class
+ * \briefly This is the class for working with texts in UTF-16
+ */
 class Text {
  private:
   char16_t* bytes_{nullptr};
@@ -77,10 +111,18 @@ class Text {
     setLinePointers();
   }
 
+  /*!
+ * \function
+ * \briefly This method is used to find out the size of file and its access rights
+ */
   void printFileInfo(const char* file_location) {
     print_file_info(file_location);
   }
 
+  /*!
+* \function
+* \briefly This method is used to sort strings in the text
+*/
   template<class Comp = DefaultComp>
   void sort() {
     std::cout << "# i'm sorting your file\n";
@@ -88,6 +130,10 @@ class Text {
     std::cout << "# it's ok\n";
   }
 
+  /*!
+* \function
+* \briefly This method prints the text to the empty file
+*/
   void writeToFile(const char* output_location) {
     printf("# writing text to: \t%s\n", output_location);
     create_empty_file(output_location);
@@ -96,6 +142,10 @@ class Text {
     }
   }
 
+  /*!
+* \function
+* \briefly This method appends the text to the empty file
+*/
   void addToFile(const char* output_location) {
     for (size_t line_id = 0; line_id < line_cnt_; ++line_id) {
       add_line_to_file(lines_[line_id].getPtr(), output_location, lines_[line_id].size());

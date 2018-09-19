@@ -1,3 +1,11 @@
+/*!
+ * \file
+ * \brief This file contains the general exceptions which may arise.
+ *
+ * \author Mikhail Lepekhin
+ * \copyright All rights belong to the author
+ * \version 1.0
+ */
 #ifndef TEXT_SORT_EXCEPTIONS_H
 #define TEXT_SORT_EXCEPTIONS_H
 
@@ -5,6 +13,10 @@
 #include <exception>
 #include <string>
 
+/*!
+ * \class
+ * \briefly This is the general struct providing opportunity to catch errors and identify the names of the functions in which they occur
+ */
 struct TextSortException : public std::exception {
   std::string message;
   std::string function_name;

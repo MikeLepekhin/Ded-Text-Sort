@@ -1,3 +1,12 @@
+/*!
+ * \file
+ * \brief This file contains the core of the program written in C.
+ *
+ * \author Mikhail Lepekhin
+ * \copyright All rights belong to the author
+ * \version 1.0
+ */
+
 #ifndef TEXT_SORT_STDLIB_UTF16_H
 #define TEXT_SORT_STDLIB_UTF16_H
 
@@ -6,6 +15,10 @@
 #include <assert.h>
 #include "exceptions.h"
 
+/*!
+* \function
+* \briefly This function checks if the file exists
+*/
 bool file_exists(const char* filename) {
   FILE* file = fopen(filename, "r");
 
@@ -23,6 +36,10 @@ size_t byte_count(const char* file_location) {
   return fileStat.st_size;
 }
 
+/*!
+* \function
+* \briefly This function is used to read text from <filename> having UTF-16 encoding.
+*/
 void read_file(char16_t** destination, const char* filename, size_t byte_cnt = 0) {
   if (byte_cnt == 0) {
     byte_cnt = byte_count(filename);
@@ -34,6 +51,10 @@ void read_file(char16_t** destination, const char* filename, size_t byte_cnt = 0
   fclose(text_file);
 }
 
+/*!
+* \function
+* \briefly This is analog of standart strlen function but for UTF-16 encoding.
+*/
 size_t strlen_utf16(const char16_t* str) {
   if (str == NULL) {
     return 0;
@@ -45,6 +66,10 @@ size_t strlen_utf16(const char16_t* str) {
   return cur_len;
 }
 
+/*!
+* \function
+* \briefly This function calculates the amount of characters in text.
+*/
 size_t textsize(const char16_t* str) {
   if (str == NULL) {
     return 0;
@@ -56,6 +81,10 @@ size_t textsize(const char16_t* str) {
   return cur_len;
 }
 
+/*!
+* \function
+* \briefly This function is used to create an empty file and to write there the text.
+*/
 void write_to_file(char16_t* text, const char* output_location, size_t text_size = 0) {
   FILE* output_file = fopen(output_location, "w");
 
@@ -66,6 +95,10 @@ void write_to_file(char16_t* text, const char* output_location, size_t text_size
   fclose(output_file);
 }
 
+/*!
+* \function
+* \briefly This function is used to append a line to the text.
+*/
 void add_line_to_file(char16_t* str, const char* output_location, size_t len = 0) {
   FILE* output_file = fopen(output_location, "a");
 
@@ -127,7 +160,10 @@ void create_empty_file(const char* file_location) {
   fclose(text_file);
 }
 
-
+/*!
+* \function
+* \briefly This function is used to print size and access right of the file.
+*/
 void print_file_info(const char* file_location) {
   struct stat fileStat;
   assert(stat(file_location, &fileStat) == 0);
