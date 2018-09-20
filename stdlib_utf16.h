@@ -99,14 +99,11 @@ void write_to_file(char16_t* text, const char* output_location, size_t text_size
 * \function
 * \briefly This function is used to append a line to the text.
 */
-void add_line_to_file(char16_t* str, const char* output_location, size_t len = 0) {
-  FILE* output_file = fopen(output_location, "a");
-
+void add_line_to_file(char16_t* str, FILE* file, size_t len = 0) {
   if (len == 0) {
     len = strlen_utf16(str);
   }
-  fwrite(str, sizeof(char16_t), len + 1, output_file);
-  fclose(output_file);
+  fwrite(str, sizeof(char16_t), len + 1, file);
 }
 
 bool is_separator(char16_t ch) {
@@ -115,20 +112,6 @@ bool is_separator(char16_t ch) {
       || ch == u'(' || ch == u')' || ch == u'[' || ch == u']'
       || ch == u'{' || ch == u'}' || ch == u'«' || ch == u'»'
       || ch == u'`';
-}
-
-void print_without_separators(char16_t* str, const char* filename) {
-  size_t len = strlen_utf16(str) ;
-  char16_t buf[len + 1];
-  size_t buf_size = 0;
-
-  for (size_t i = 0; i < len; ++i) {
-    if (!is_separator(str[i])) {
-      buf[buf_size++] = str[i];
-    }
-  }
-  buf[buf_size] = '\0';
-  add_line_to_file(buf, filename, buf_size);
 }
 
 size_t strcnt_in_text(char16_t* text, size_t text_size = 0) {
@@ -152,12 +135,6 @@ void print_file(const char* file_location) {
     printf("%c", cur_ch);
     cur_ch = fgetc(text_file);
   }
-  fclose(text_file);
-}
-
-void create_empty_file(const char* file_location) {
-  FILE* text_file = fopen(file_location, "w");
-
   fclose(text_file);
 }
 

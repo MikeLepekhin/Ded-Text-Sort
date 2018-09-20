@@ -111,6 +111,24 @@ class Text {
     setLinePointers();
   }
 
+  const StringUtf16* operator[](size_t pos) const {
+    if (pos >= line_cnt_) {
+      throw OutOfRangeException("", __PRETTY_FUNCTION__);
+    }
+    return lines_ + pos;
+  }
+
+  StringUtf16* operator[](size_t pos) {
+    if (pos >= line_cnt_) {
+      throw OutOfRangeException("", __PRETTY_FUNCTION__);
+    }
+    return lines_ + pos;
+  }
+
+  size_t size() const {
+    return line_cnt_;
+  }
+
   /*!
  * \function
  * \briefly This method is used to find out the size of file and its access rights
@@ -121,34 +139,12 @@ class Text {
 
   /*!
 * \function
-* \briefly This method is used to sort strings in the text
-*/
-  template<class Comp = DefaultComp>
-  void sort() {
-    std::cout << "# i'm sorting your file\n";
-    std::sort(&lines_[0], &lines_[line_cnt_], Comp());
-    std::cout << "# it's ok\n";
-  }
-
-  /*!
-* \function
 * \briefly This method prints the text to the empty file
 */
-  void writeToFile(const char* output_location) {
+  void writeToFile(FILE* file, const char* output_location = "") {
     printf("# writing text to: \t%s\n", output_location);
-    create_empty_file(output_location);
     for (size_t line_id = 0; line_id < line_cnt_; ++line_id) {
-      add_line_to_file(lines_[line_id].getPtr(), output_location, lines_[line_id].size());
-    }
-  }
-
-  /*!
-* \function
-* \briefly This method appends the text to the empty file
-*/
-  void addToFile(const char* output_location) {
-    for (size_t line_id = 0; line_id < line_cnt_; ++line_id) {
-      add_line_to_file(lines_[line_id].getPtr(), output_location, lines_[line_id].size());
+      add_line_to_file(lines_[line_id].getPtr(), file, lines_[line_id].size());
     }
   }
 

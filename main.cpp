@@ -57,6 +57,49 @@ void parseOptions(int argc, char** argv) {
   }
 }
 
+/*!
+* \function
+* \briefly This function is used to sort strings in the text
+*/
+template<class Comp = DefaultComp>
+void textSort(Text& text) {
+  std::cout << "# i'm sorting your file\n";
+  std::sort(text[0], text[text.size()], Comp());
+  std::cout << "# it's ok\n";
+}
+
+class SmartFile {
+ private:
+  FILE* file_{nullptr};
+
+  void release() {
+    if (file_ != nullptr) {
+      fclose(file_);
+    }
+    file_ = nullptr;
+  }
+
+ public:
+  SmartFile() {}
+
+  SmartFile(const char* filename, const char* mode = "r") {
+    file_ = fopen(filename, mode);
+  }
+
+  FILE* getFile() const {
+    return file_;
+  }
+
+  void setFile(const char* filename, const char* mode = "r") {
+    release();
+    file_ = fopen(filename, mode);
+  }
+
+  ~SmartFile() {
+    release();
+  }
+};
+
 int main(int argc, char** argv) {
   setlocale(LC_ALL, "ru_RU.UTF-8");
 
@@ -70,30 +113,27 @@ int main(int argc, char** argv) {
     return 1;
   }
 
+  SmartFile output_file;
+  char* output_location = nullptr;
+
+  if (argc == 3) {
+    output_file.setFile(argv[2], "w");
+    output_location = argv[2];
+  } else {
+    output_file.setFile(argv[1], "w");
+    output_location = argv[1];
+  }
+
   try {
     Text text(argv[1]);
-    text.sort<DefaultComp>();
+    textSort<DefaultComp>(text);
+    text.writeToFile(output_file.getFile(), output_location);
 
-    if (argc == 3) {
-      text.writeToFile(argv[2]);
-    } else {
-      text.writeToFile(argv[1]);
-    }
-    text.sort<ReverseComp>();
+    textSort<ReverseComp>(text);
+    text.writeToFile(output_file.getFile(), output_location);
 
-    if (argc == 3) {
-      text.addToFile(argv[2]);
-    } else {
-      text.addToFile(argv[1]);
-    }
-    text.sort<OriginalComp>();
-
-    if (argc == 3) {
-      text.addToFile(argv[2]);
-    } else {
-      text.addToFile(argv[1]);
-    }
-
+    textSort<OriginalComp>(text);
+    text.writeToFile(output_file.getFile(), output_location);
   } catch (const TextSortException& tsexception) {
     std::cerr << tsexception;
     return 1;
